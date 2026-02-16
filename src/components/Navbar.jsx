@@ -1,13 +1,20 @@
 "use client";
 
 import React from "react";
-import { Search, Bell, MapPin, ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { Search, Bell, MapPin, ChevronDown, Sun, Moon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "next-themes";
 
 export default function Navbar() {
     const { user, logout } = useAuth();
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => setMounted(true), []);
+
+    if (!mounted) return null; // Avoid hydration mismatch
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-black/70 backdrop-blur-2xl border-b border-neutral-100 dark:border-neutral-900 pb-2">
@@ -43,6 +50,36 @@ export default function Navbar() {
                     </div>
 
                     <div className="flex items-center gap-2">
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                            className="w-10 h-10 rounded-2xl bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center transition-colors hover:bg-neutral-200 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 overflow-hidden"
+                        >
+                            <AnimatePresence mode="wait">
+                                {theme === 'dark' ? (
+                                    <motion.div
+                                        key="sun"
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        exit={{ y: -20, opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <Sun size={20} />
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="moon"
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        exit={{ y: -20, opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <Moon size={20} />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.button>
+
                         {user && (
                             <Link href="/notifications">
                                 <motion.button

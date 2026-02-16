@@ -11,7 +11,8 @@ import {
     MapPin,
     Calendar,
     ChevronRight,
-    MoreHorizontal
+    MoreHorizontal,
+    Plus
 } from "lucide-react";
 import { motion } from "framer-motion";
 
