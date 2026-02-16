@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export default function TrustSection() {
     return (
-        <section className="py-8 px-5 bg-neutral-50 dark:bg-black">
+        <section className="py-8 px-3 bg-neutral-50 dark:bg-black">
             <div className="bg-neutral-900 rounded-[32px] p-8 text-white relative overflow-hidden">
                 {/* Abstract Background Detail */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary-600/20 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" />

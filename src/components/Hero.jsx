@@ -29,7 +29,7 @@ const itemVariants = {
 
 export default function Hero() {
   return (
-    <section className="relative pt-36 pb-8 px-5 overflow-hidden bg-neutral-50 dark:bg-black min-h-[600px]">
+    <section className="relative pt-36 pb-8 px-3 overflow-hidden bg-neutral-50 dark:bg-black min-h-[600px]">
       {/* Dynamic Background Blobs */}
       <motion.div
         animate={{
@@ -63,9 +63,9 @@ export default function Hero() {
             <span className="text-[10px] font-bold text-primary-600 uppercase tracking-[0.2em]">Live Intelligence Platform</span>
           </div>
           <h1 className="text-4xl font-black tracking-tight leading-tight mb-2">
-            Where are we <br />
+            Connecting you <br />
             <span className="relative">
-              <span className="text-primary-600">shipping today?</span>
+              <span className="text-primary-600">with trusted drivers</span>
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: "100%" }}

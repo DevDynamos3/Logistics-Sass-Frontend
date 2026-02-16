@@ -33,7 +33,7 @@ const features = [
 
 export default function Features() {
     return (
-        <section className="py-8 px-5 bg-neutral-50 dark:bg-black">
+        <section className="py-8 px-3 bg-neutral-50 dark:bg-black">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-black tracking-tight">Discover Services</h2>
                 <span className="text-[10px] font-bold text-primary-600 uppercase tracking-widest">See all</span>

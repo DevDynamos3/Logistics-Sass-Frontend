@@ -68,7 +68,7 @@ export default function SignupPage() {
     const iconClasses = "text-neutral-400 group-focus-within:text-primary-600 transition-colors";
 
     return (
-        <main className="min-h-screen bg-neutral-50 dark:bg-black font-sans px-5 py-16">
+        <main className="min-h-screen bg-neutral-50 dark:bg-black font-sans px-3 py-10">
             <div className="w-full max-w-xl mx-auto space-y-12">
                 {/* Header */}
                 <div className="flex flex-col items-center text-center">

@@ -6,7 +6,7 @@ import { MapPin, Navigation, ArrowRight } from "lucide-react";
 
 export default function MapPreview() {
     return (
-        <section className="py-8 px-5 bg-neutral-50 dark:bg-black pb-32">
+        <section className="py-8 px-3 bg-neutral-50 dark:bg-black pb-32">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-black tracking-tight">Live Network</h2>
                 <div className="flex items-center gap-1">

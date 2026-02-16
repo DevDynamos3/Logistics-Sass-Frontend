@@ -30,7 +30,7 @@ export default function LoginPage() {
     };
 
     return (
-        <main className="min-h-screen bg-neutral-50 dark:bg-black font-sans flex flex-col items-center justify-center px-5 py-10">
+        <main className="min-h-screen bg-neutral-50 dark:bg-black font-sans flex flex-col items-center justify-center px-3 py-10">
             <div className="w-full max-w-md space-y-10">
                 {/* Logo Section */}
                 <div className="flex flex-col items-center">

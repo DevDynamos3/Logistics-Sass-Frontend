@@ -14,7 +14,7 @@ const stats = [
 export default function StatsBar() {
     return (
         <div className="py-6 bg-neutral-50 dark:bg-black">
-            <div className="flex items-center justify-between px-5 mb-4">
+            <div className="flex items-center justify-between px-3 mb-4">
                 <h3 className="font-black text-xs uppercase tracking-widest text-neutral-400">Network Activity</h3>
                 <span className="text-[10px] font-bold text-primary-600 uppercase">Real-time</span>
             </div>
