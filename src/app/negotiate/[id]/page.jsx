@@ -17,7 +17,8 @@ import {
     Mic,
     Play,
     Volume2,
-    Square
+    Square,
+    Trash2
 } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 
@@ -26,6 +27,52 @@ const driverData = {
     "2": { name: "Elena Rodriguez", rating: 4.8, experience: "4 years", license: "Heavy Duty", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&h=200&auto=format&fit=crop" },
     "3": { name: "Marcus Chen", rating: 5.0, experience: "12 years", license: "Masters CDL", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&auto=format&fit=crop" },
     "default": { name: "Alex Johnson", rating: 4.8, experience: "5 years", license: "Class A CDL", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&h=200&auto=format&fit=crop" }
+};
+
+const AudioMessage = ({ src }) => {
+    const [isPlaying, setIsPlaying] = React.useState(false);
+    const audioRef = React.useRef(null);
+
+    React.useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.onended = () => setIsPlaying(false);
+        }
+    }, []);
+
+    const togglePlay = () => {
+        if (!audioRef.current) return;
+        if (isPlaying) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play();
+        }
+        setIsPlaying(!isPlaying);
+    };
+
+    return (
+        <div className="flex items-center gap-2 min-w-[120px]">
+            <button
+                onClick={togglePlay}
+                className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0 hover:bg-white/30 transition-colors"
+            >
+                {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" className="ml-0.5" />}
+            </button>
+            <div className="flex-1 h-8 flex items-center gap-0.5 opacity-60">
+                {[...Array(12)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="w-1 bg-current rounded-full animate-pulse"
+                        style={{
+                            height: Math.max(4, Math.random() * 24) + 'px',
+                            animationDelay: `${i * 0.1}s`,
+                            animationDuration: isPlaying ? '0.5s' : '0s'
+                        }}
+                    />
+                ))}
+            </div>
+            <audio ref={audioRef} src={src} className="hidden" />
+        </div>
+    );
 };
 
 export default function NegotiationRoom() {
@@ -39,21 +86,64 @@ export default function NegotiationRoom() {
     const [inputText, setInputText] = useState("");
     const [isAccepted, setIsAccepted] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
-    const [recordingTime, setRecordingTime] = useState(0);
+    const [recordingDuration, setRecordingDuration] = useState(0); // Renamed from recordingTime to match driver
     const [isDriverTyping, setIsDriverTyping] = useState(false);
-    const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
 
-    useEffect(() => {
-        let interval;
-        if (isRecording) {
-            interval = setInterval(() => {
-                setRecordingTime(prev => prev + 1);
+    const mediaRecorderRef = React.useRef(null);
+    const audioChunksRef = React.useRef([]);
+    const timerRef = React.useRef(null);
+
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderRef.current = new MediaRecorder(stream);
+            audioChunksRef.current = [];
+
+            mediaRecorderRef.current.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunksRef.current.push(event.data);
+                }
+            };
+
+            mediaRecorderRef.current.onstop = () => {
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                handleSendMessage("audio", null, audioUrl); // Pass audioUrl
+            };
+
+            mediaRecorderRef.current.start();
+            setIsRecording(true);
+            setRecordingDuration(0);
+
+            timerRef.current = setInterval(() => {
+                setRecordingDuration(prev => prev + 1);
             }, 1000);
-        } else {
-            setRecordingTime(0);
+
+        } catch (error) {
+            console.error("Error accessing microphone:", error);
+            alert("Could not access microphone. Please ensuring permission is granted.");
         }
-        return () => clearInterval(interval);
-    }, [isRecording]);
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop();
+            mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+            clearInterval(timerRef.current);
+            setIsRecording(false);
+        }
+    };
+
+    const cancelRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop();
+            mediaRecorderRef.current.onstop = null;
+            mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+            clearInterval(timerRef.current);
+            setIsRecording(false);
+            setRecordingDuration(0);
+        }
+    };
 
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
@@ -61,7 +151,7 @@ export default function NegotiationRoom() {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const handleSendMessage = (type = "text", duration = null) => {
+    const handleSendMessage = (type = "text", duration = null, audioUrl = null) => {
         if (type === "text" && !inputText.trim()) return;
 
         const newMessage = {
@@ -70,6 +160,7 @@ export default function NegotiationRoom() {
             text: type === "text" ? inputText : null,
             duration: duration,
             type: type,
+            audioUrl: audioUrl,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
 
@@ -90,15 +181,6 @@ export default function NegotiationRoom() {
             };
             setMessages(prev => [...prev, reply]);
         }, 3000);
-    };
-
-    const toggleRecording = () => {
-        if (isRecording) {
-            handleSendMessage("voice", formatTime(recordingTime), recordingTime);
-            setIsRecording(false);
-        } else {
-            setIsRecording(true);
-        }
     };
 
     const playVoiceMessage = (msgId, durationInSeconds) => {
@@ -231,40 +313,8 @@ export default function NegotiationRoom() {
                                         ? "bg-white dark:bg-neutral-900 border-neutral-100 dark:border-neutral-800 rounded-bl-none"
                                         : "bg-primary-600 text-white border-transparent rounded-br-none"
                                         }`}>
-                                        {msg.type === "voice" ? (
-                                            <div className="flex items-center gap-4 min-w-[200px]">
-                                                <button
-                                                    onClick={() => playVoiceMessage(msg.id, recordingTime)}
-                                                    className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors"
-                                                >
-                                                    {currentlyPlaying === msg.id ? (
-                                                        <Square size={16} fill="currentColor" />
-                                                    ) : (
-                                                        <Play size={16} fill="currentColor" />
-                                                    )}
-                                                </button>
-                                                <div className="flex-1 space-y-1">
-                                                    <div className="flex gap-1 items-center h-4">
-                                                        {[1, 2, 3, 2, 4, 3, 1, 2, 3, 4, 2, 1].map((h, i) => (
-                                                            <motion.div
-                                                                key={i}
-                                                                animate={currentlyPlaying === msg.id ? {
-                                                                    height: ["25%", "100%", "25%"]
-                                                                } : {}}
-                                                                transition={{
-                                                                    duration: 0.5,
-                                                                    repeat: Infinity,
-                                                                    delay: i * 0.05
-                                                                }}
-                                                                className={`flex-1 rounded-full ${msg.sender === 'user' ? 'bg-white/40' : 'bg-primary-600/20'}`}
-                                                                style={{ height: `${h * 25}%` }}
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                    <p className={`text-[10px] font-bold ${msg.sender === 'user' ? 'text-white/60' : 'text-neutral-400'}`}>{msg.duration}</p>
-                                                </div>
-                                                <Volume2 size={16} className={msg.sender === 'user' ? 'text-white/40' : 'text-neutral-400'} />
-                                            </div>
+                                        {msg.type === "audio" || msg.type === "voice" ? ( // Handle both for backward compat with mock
+                                            <AudioMessage src={msg.audioUrl} />
                                         ) : (
                                             msg.text
                                         )}
@@ -328,7 +378,7 @@ export default function NegotiationRoom() {
                         )}
                     </AnimatePresence>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 items-center">
                         <div className="relative flex-1">
                             <AnimatePresence mode="wait">
                                 {isRecording ? (
@@ -337,58 +387,65 @@ export default function NegotiationRoom() {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: 20 }}
-                                        className="w-full bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-full px-8 py-5 flex items-center justify-between"
+                                        className="w-full bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-full px-4 py-3 flex items-center justify-between"
                                     >
                                         <div className="flex items-center gap-3">
+                                            <button
+                                                onClick={cancelRecording}
+                                                className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/20 text-red-600 flex items-center justify-center hover:bg-red-200 transition-colors"
+                                            >
+                                                <Trash2 size={20} />
+                                            </button>
                                             <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                                            <span className="text-sm font-black text-red-600 dark:text-red-400 uppercase tracking-widest">Recording</span>
+                                            <span className="text-sm font-black text-red-600 dark:text-red-400 tabular-nums">{formatTime(recordingDuration)}</span>
                                         </div>
-                                        <span className="text-sm font-black tabular-nums text-red-600 dark:text-red-400">{formatTime(recordingTime)}</span>
-                                        <motion.button
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={() => setIsRecording(false)}
-                                            className="text-[10px] font-bold text-red-400 uppercase tracking-widest"
+
+                                        <button
+                                            onClick={stopRecording}
+                                            className="w-12 h-12 rounded-full bg-primary-600 text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all"
                                         >
-                                            Cancel
-                                        </motion.button>
+                                            <Send size={20} />
+                                        </button>
                                     </motion.div>
                                 ) : (
                                     <motion.div
                                         key="input"
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        className="relative"
+                                        className="relative flex items-center gap-2"
                                     >
-                                        <input
-                                            type="text"
-                                            placeholder="Type a message or counter offer..."
-                                            className="w-full bg-neutral-100 dark:bg-neutral-800 rounded-full px-8 py-5 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-primary-500/10 pr-20 border-none"
-                                            value={inputText}
-                                            onChange={(e) => setInputText(e.target.value)}
-                                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage("text")}
-                                        />
-                                        <motion.button
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={() => handleSendMessage("text")}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary-600/30"
-                                        >
-                                            <Send size={20} />
-                                        </motion.button>
+                                        <div className="relative flex-1">
+                                            <input
+                                                type="text"
+                                                placeholder="Type a message..."
+                                                className="w-full bg-neutral-100 dark:bg-neutral-800 rounded-full px-6 py-4 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-primary-500/10 pr-12 border-none transition-all"
+                                                value={inputText}
+                                                onChange={(e) => setInputText(e.target.value)}
+                                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage("text")}
+                                            />
+                                            <motion.button
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={startRecording}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-red-500 w-10 h-10 flex items-center justify-center transition-colors"
+                                            >
+                                                <Mic size={20} />
+                                            </motion.button>
+                                        </div>
+                                        {inputText.trim() && (
+                                            <motion.button
+                                                initial={{ scale: 0, opacity: 0 }}
+                                                animate={{ scale: 1, opacity: 1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => handleSendMessage("text")}
+                                                className="bg-primary-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary-600/30 shrink-0"
+                                            >
+                                                <Send size={20} />
+                                            </motion.button>
+                                        )}
                                     </motion.div>
                                 )}
                             </AnimatePresence>
                         </div>
-
-                        <motion.button
-                            whileTap={{ scale: 0.9 }}
-                            onClick={toggleRecording}
-                            className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all ${isRecording
-                                ? "bg-red-600 text-white shadow-red-600/30 ring-4 ring-red-500/20"
-                                : "bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-100 dark:border-neutral-800 shadow-neutral-200/50"
-                                }`}
-                        >
-                            {isRecording ? <Square size={24} fill="currentColor" /> : <Mic size={24} />}
-                        </motion.button>
                     </div>
                 </div>
             </div>

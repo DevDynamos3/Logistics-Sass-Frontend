@@ -6,56 +6,63 @@ import { motion } from "framer-motion";
 
 const features = [
     {
-        title: "Eco-Shipping",
-        description: "AI-route optimization for 30% less CO2.",
-        icon: <Truck size={20} />,
-        color: "bg-emerald-500",
+        title: "Fast Delivery",
+        description: "Get your package in 24 hours",
+        emoji: "⚡",
+        color: "from-amber-400 to-amber-600",
     },
     {
-        title: "Express",
-        description: "Guaranteed 24h city-to-city delivery.",
-        icon: <Zap size={20} />,
-        color: "bg-amber-500",
+        title: "Safe & Secure",
+        description: "Your items are protected",
+        emoji: "🔒",
+        color: "from-green-400 to-green-600",
     },
     {
-        title: "Inter-State",
-        description: "Reliable cross-country freight logistics.",
-        icon: <Globe size={20} />,
-        color: "bg-primary-500",
+        title: "Track Anytime",
+        description: "Know where your package is",
+        emoji: "📍",
+        color: "from-blue-400 to-blue-600",
     },
     {
-        title: "Secure Box",
-        description: "Tamper-proof escrow protected shipping.",
-        icon: <Shield size={20} />,
-        color: "bg-indigo-500",
+        title: "Affordable",
+        description: "Best prices guaranteed",
+        emoji: "💰",
+        color: "from-purple-400 to-purple-600",
     },
 ];
 
 export default function Features() {
     return (
-        <section className="py-8 px-3 bg-neutral-50 dark:bg-black">
+        <section className="py-8 px-4 bg-neutral-50 dark:bg-black">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-black tracking-tight">Discover Services</h2>
-                <span className="text-[10px] font-bold text-primary-600 uppercase tracking-widest">See all</span>
+                <div>
+                    <h2 className="text-2xl font-black tracking-tight dark:text-white">Why Choose Us</h2>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">What makes us special</p>
+                </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 {features.map((feature, index) => (
                     <motion.div
                         key={index}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: index * 0.05 }}
-                        className="bg-white dark:bg-neutral-900 p-5 rounded-[28px] border border-neutral-100 dark:border-neutral-800 shadow-sm flex flex-col items-start active:bg-neutral-50 dark:active:bg-neutral-800 transition-colors"
+                        transition={{ delay: index * 0.1 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="relative overflow-hidden rounded-[24px] shadow-lg cursor-pointer"
                     >
-                        <div className={`w-10 h-10 ${feature.color} text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-${feature.color.split('-')[1]}-500/20`}>
-                            {feature.icon}
+                        {/* Gradient Background */}
+                        <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-20`} />
+
+                        {/* Glassmorphism Layer */}
+                        <div className="relative backdrop-blur-xl bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10 p-5 flex flex-col items-start">
+                            <div className="text-5xl mb-3">{feature.emoji}</div>
+                            <h3 className="text-sm font-black mb-1 dark:text-white">{feature.title}</h3>
+                            <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                                {feature.description}
+                            </p>
                         </div>
-                        <h3 className="text-xs font-black mb-1 uppercase tracking-tight">{feature.title}</h3>
-                        <p className="text-[10px] font-medium text-neutral-500 dark:text-neutral-400 leading-tight">
-                            {feature.description}
-                        </p>
                     </motion.div>
                 ))}
             </div>

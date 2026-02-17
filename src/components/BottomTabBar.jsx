@@ -18,8 +18,8 @@ export default function BottomTabBar() {
     const pathname = usePathname();
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 px-2 pb-safe md:hidden">
-            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-2xl border border-neutral-100 dark:border-neutral-900 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex justify-between items-center px-2 py-2 mb-6">
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-gradient-to-t from-white/50 dark:from-black/50 to-transparent pt-4">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-2xl border border-neutral-100 dark:border-neutral-900 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-t-[30px] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex justify-between items-center">
                 {tabs.map((tab, index) => {
                     const isActive = pathname === tab.href;
                     return (

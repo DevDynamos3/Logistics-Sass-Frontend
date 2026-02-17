@@ -6,40 +6,51 @@ import { MapPin, Navigation, ArrowRight } from "lucide-react";
 
 export default function MapPreview() {
     return (
-        <section className="py-8 px-3 bg-neutral-50 dark:bg-black pb-32">
+        <section className="py-8 px-4 bg-neutral-50 dark:bg-black pb-32">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-black tracking-tight">Live Network</h2>
-                <div className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Active</span>
+                <div>
+                    <h2 className="text-2xl font-black tracking-tight dark:text-white">Live Network</h2>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Active deliveries across Nigeria</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-xs font-black text-green-600 dark:text-green-400">Live</span>
                 </div>
             </div>
 
-            <div className="relative aspect-square w-full bg-neutral-100 dark:bg-neutral-900 rounded-[32px] overflow-hidden border border-neutral-100 dark:border-neutral-800 shadow-inner group">
+            <div className="relative aspect-square w-full bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-900 dark:to-neutral-800 rounded-[32px] overflow-hidden border-2 border-neutral-200 dark:border-neutral-800 shadow-xl">
                 {/* Animated Map Grid */}
-                <div className="absolute inset-0 opacity-[0.15] bg-[radial-gradient(#3b82f6_1.5px,transparent_1.5px)] [background-size:24px_24px]" />
+                <div className="absolute inset-0 opacity-[0.15] bg-[radial-gradient(#3b82f6_2px,transparent_2px)] [background-size:32px_32px]" />
 
                 <div className="absolute inset-0 flex items-center justify-center">
-                    {/* Pulsing Pins */}
+                    {/* Pulsing Location Pins with Emojis */}
                     {[
-                        { top: '25%', left: '30%', size: 24 },
-                        { top: '50%', left: '55%', size: 40 },
-                        { top: '70%', left: '20%', size: 32 }
+                        { top: '25%', left: '30%', emoji: '📍', label: 'Lagos' },
+                        { top: '50%', left: '55%', emoji: '🚛', label: 'Abuja' },
+                        { top: '70%', left: '20%', emoji: '📦', label: 'PH' }
                     ].map((pin, i) => (
                         <motion.div
                             key={i}
                             className="absolute"
                             style={{ top: pin.top, left: pin.left }}
-                            animate={{ scale: [1, 1.1, 1] }}
+                            animate={{ y: [0, -10, 0] }}
                             transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
                         >
-                            <div className="relative">
-                                <MapPin className="text-primary-600" size={pin.size} fill="currentColor" fillOpacity={0.2} />
+                            <div className="relative flex flex-col items-center">
+                                {/* Pulsing Ring */}
                                 <motion.div
-                                    className="absolute inset-0 bg-primary-600 rounded-full -z-10"
-                                    animate={{ scale: [1, 2], opacity: [0.5, 0] }}
+                                    className="absolute inset-0 bg-primary-500 rounded-full -z-10"
+                                    animate={{ scale: [1, 2.5], opacity: [0.5, 0] }}
                                     transition={{ duration: 2, repeat: Infinity }}
                                 />
+
+                                {/* Emoji Pin */}
+                                <div className="text-4xl mb-1 drop-shadow-lg">{pin.emoji}</div>
+
+                                {/* Location Label */}
+                                <div className="bg-white dark:bg-neutral-900 px-3 py-1 rounded-full shadow-lg border border-neutral-200 dark:border-neutral-700">
+                                    <span className="text-xs font-black text-neutral-800 dark:text-white">{pin.label}</span>
+                                </div>
                             </div>
                         </motion.div>
                     ))}
@@ -47,20 +58,34 @@ export default function MapPreview() {
 
                 {/* Floating Stats Overlay */}
                 <div className="absolute bottom-6 left-6 right-6">
-                    <div className="bg-white/80 dark:bg-black/80 backdrop-blur-xl p-4 rounded-2xl border border-white/20 shadow-2xl flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-primary-600/10 text-primary-600 rounded-xl flex items-center justify-center">
-                                <Navigation size={18} className="rotate-45" />
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="relative overflow-hidden rounded-[24px] shadow-2xl"
+                    >
+                        {/* Gradient Background */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary-400/30 via-primary-500/30 to-primary-600/30" />
+
+                        {/* Glassmorphism Layer */}
+                        <div className="relative backdrop-blur-xl bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10 p-4 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-2xl bg-primary-500/20 flex items-center justify-center text-3xl">
+                                    🗺️
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400">Active Routes</p>
+                                    <p className="text-lg font-black dark:text-white">1,492 Trips</p>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-[8px] font-bold text-neutral-500 uppercase tracking-widest">Active Corridors</p>
-                                <p className="text-sm font-black tracking-tight">1,492 Routes</p>
-                            </div>
+                            <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                className="w-12 h-12 rounded-full bg-white dark:bg-neutral-800 text-primary-600 flex items-center justify-center shadow-lg"
+                            >
+                                <ArrowRight size={20} />
+                            </motion.button>
                         </div>
-                        <button className="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
-                            <ArrowRight size={16} />
-                        </button>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </section>
