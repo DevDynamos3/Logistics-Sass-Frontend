@@ -21,7 +21,7 @@ const features = [
         title: "Inter-State",
         description: "Reliable cross-country freight logistics.",
         icon: <Globe size={20} />,
-        color: "bg-blue-500",
+        color: "bg-primary-500",
     },
     {
         title: "Secure Box",

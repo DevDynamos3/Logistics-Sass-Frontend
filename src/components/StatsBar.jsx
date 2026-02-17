@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { TrendingUp, Users, Globe, CheckCircle } from "lucide-react";
 
 const stats = [
-    { label: "Active Carriers", value: "10K+", icon: Users, color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/10" },
+    { label: "Active Carriers", value: "10K+", icon: Users, color: "text-primary-500", bg: "bg-primary-50 dark:bg-primary-900/10" },
     { label: "Daily Shipments", value: "25K+", icon: TrendingUp, color: "text-green-500", bg: "bg-green-50 dark:bg-green-900/10" },
     { label: "Countries", value: "45+", icon: Globe, color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-900/10" },
     { label: "Satisfaction", value: "99.9%", icon: CheckCircle, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-900/10" },

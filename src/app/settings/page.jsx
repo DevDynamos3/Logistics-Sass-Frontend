@@ -21,7 +21,7 @@ const sections = [
     {
         title: "Account",
         items: [
-            { icon: User, label: "Personal Information", color: "text-blue-600", bg: "bg-blue-100" },
+            { icon: User, label: "Personal Information", color: "text-primary-600", bg: "bg-primary-100" },
             { icon: CreditCard, label: "Payment Methods", color: "text-emerald-600", bg: "bg-emerald-100" },
             { icon: Truck, label: "Fleet Management", color: "text-orange-600", bg: "bg-orange-100" },
         ]

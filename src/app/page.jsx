@@ -8,7 +8,7 @@ import BottomTabBar from "@/components/BottomTabBar";
 
 export default function Home() {
     return (
-        <main className="min-h-screen bg-white dark:bg-black font-sans selection:bg-blue-200 selection:text-blue-900">
+        <main className="min-h-screen bg-white dark:bg-black font-sans selection:bg-primary-200 selection:text-primary-900">
             <Navbar />
             <Hero />
             <StatsBar />
