@@ -138,7 +138,7 @@ export default function ShipmentsPage() {
                                     >
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-2">
-                                                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tight ${shipment.status === "In Transit" ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600" :
+                                                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tight ${shipment.status === "In Transit" ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600" :
                                                     shipment.status === "Pending" ? "bg-amber-50 dark:bg-amber-900/30 text-amber-600" :
                                                         "bg-green-50 dark:bg-green-900/30 text-green-600"
                                                     }`}>

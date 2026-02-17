@@ -63,12 +63,12 @@ export default function RegisterOrganization() {
 
             {/* Header */}
             <div>
-                <h1 className="text-4xl font-black tracking-tight text-neutral-900 dark:text-white">Register Organization</h1>
+                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-neutral-900 dark:text-white">Register Organization</h1>
                 <p className="text-neutral-500 font-bold uppercase tracking-widest text-[11px] mt-2">Introduce a new logistics partner to the network</p>
             </div>
 
             {/* Form Card */}
-            <div className="bg-white dark:bg-neutral-900 rounded-[56px] p-12 border border-neutral-100 dark:border-neutral-800 shadow-xl overflow-hidden relative">
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl md:rounded-[56px] p-6 md:p-12 border border-neutral-100 dark:border-neutral-800 shadow-xl overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary-600/5 blur-3xl rounded-full -mr-20 -mt-20"></div>
 
                 <form onSubmit={handleSubmit} className="space-y-8 relative">
@@ -182,7 +182,7 @@ export default function RegisterOrganization() {
                         <motion.button
                             whileTap={{ scale: 0.98 }}
                             disabled={loading}
-                            className="h-16 px-12 bg-primary-600 text-white rounded-[24px] font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-primary-600/40 flex items-center justify-center gap-4 transition-all disabled:opacity-70 group"
+                            className="h-14 px-8 md:h-16 md:px-12 bg-primary-600 text-white rounded-[24px] font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-primary-600/40 flex items-center justify-center gap-4 transition-all disabled:opacity-70 group w-full md:w-auto"
                         >
                             {loading ? (
                                 <Loader2 className="animate-spin" size={20} />
